@@ -50,7 +50,6 @@ function App() {
     const [data, setData] = useState([]);
     const [chosenGenres, setChosenGenres] = useState([])
     const [data2, setData2] = useState([]);
-    const [ifChosen, setIfChosen] = useState(false)
 
     console.log(chosenGenres.length)
 
@@ -84,10 +83,6 @@ function App() {
     }, [chosenGenres]);
 
 
-
-    // const classes = useStyles();
-    let url = "";
-
     useEffect(() => {
         fetch('https://api.themoviedb.org/3/genre/movie/list?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US',)
             .then((res) => res.json())
@@ -100,7 +95,6 @@ function App() {
 
     const handleClick = (id, name) => {
         let x = id
-        setIfChosen(true)
         if (chosenGenres.some(item => item.id === x)) {
             console.log('already chosen')
             removeGenre(x)
