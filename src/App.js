@@ -52,7 +52,6 @@ function App() {
     const [data2, setData2] = useState([]);
     const [ifChosen, setIfChosen] = useState(false)
 
-    const deviceCountry = DeviceInfo.getDeviceCountry();
     console.log(chosenGenres.length)
 
     useEffect(() => {
