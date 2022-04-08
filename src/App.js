@@ -1,6 +1,22 @@
 import React, {useEffect, useState} from "react";
 
-import {Card, CardContent, CardMedia, Chip, Container, Grid, Typography} from "@mui/material";
+import {
+    Avatar,
+    Button,
+    Card,
+    CardActionArea,
+    CardContent, CardHeader,
+    CardMedia,
+    Chip,
+    Container,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Grid,
+    Typography
+} from "@mui/material";
 
 //
 // const useStyles = makeStyles({
@@ -50,8 +66,12 @@ function App() {
     const [data, setData] = useState([]);
     const [chosenGenres, setChosenGenres] = useState([])
     const [data2, setData2] = useState([]);
+    const [open, setOpen] = React.useState(false);
+    const [filmData, setFilmData] = useState([])
+    const [movieID, setMovieID] = useState([])
 
-    console.log(chosenGenres.length)
+    console.log(data)
+
 
     useEffect(() => {
         if (chosenGenres.length === 0) {
@@ -64,9 +84,9 @@ function App() {
                 .then(() => console.log('useffectrun'));
         } else {
             console.log('not empty Chosengenres')
-            let result = function(){
-                let ids = chosenGenres.reduce(function(a, b){
-                    return  (a.id || a) + ',' + b.id
+            let result = function () {
+                let ids = chosenGenres.reduce(function (a, b) {
+                    return (a.id || a) + ',' + b.id
                 })
                 return ids
             };
@@ -80,6 +100,9 @@ function App() {
                 .then(() => console.log('useffectrun'));
         }
 
+        // const language = window.navigator.userLanguage || window.navigator.language;
+        // alert(language); //works IE/SAFARI/CHROME/FF
+
     }, [chosenGenres]);
 
 
@@ -89,9 +112,19 @@ function App() {
             .then((data) => setData2(data.genres));
     }, []);
 
+
     const removeGenre = (x) => {
         setChosenGenres(chosenGenres.filter(item => item.id !== x))
     }
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
 
     const handleClick = (id, name) => {
         let x = id
@@ -101,7 +134,7 @@ function App() {
             document.getElementById(id).style.backgroundColor = 'white';
         } else {
             document.getElementById(id).style.backgroundColor = 'green';
-            setChosenGenres(chosenGenres => [...chosenGenres,{id: id, name: name}])
+            setChosenGenres(chosenGenres => [...chosenGenres, {id: id, name: name}])
             console.log(chosenGenres)
         }
 
@@ -109,6 +142,37 @@ function App() {
         console.log(chosenGenres)
     }
 
+    useEffect(() => {
+
+        let x = movieID[0]
+        console.log(x)
+        fetch('https://api.themoviedb.org/3/movie/' + x + '?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US',)
+            .then((res) => res.json())
+            .then((data) => setFilmData(data))
+            .then(() => console.log(filmData))
+            .then(() => console.log('movieIDuseffectrun'))
+    }, [movieID]);
+
+
+    const idSetter = (props) => {
+        let newArray = [props]
+        const tempMovie = [...newArray]
+        setMovieID(tempMovie)
+    }
+
+    // const displayStreamer = async (id) => {
+    //     // setMovieID(id)
+    //     await axios.get('https://api.themoviedb.org/3/movie/' + id + '/watch/providers?api_key=43a1882111c5edfb0f545102ad6d9b52').then((response) => {
+    //         setFilmData(response.data.results.EE)
+    //         console.log(streamerData)
+    //         console.log('wtf')
+    //     })
+    //     return <div>ttest</div>
+    // }
+
+    // {streamerData.map(({link}) => (
+    //     <Chip variant="outlined" clickable={true} label={link} ></Chip>
+    // ))}
     return (
         <div>
             <Container>
@@ -125,8 +189,9 @@ function App() {
                             paragraph>Combine Genres!</Typography>
                 <Grid item xs={2}>
                     <Grid sx={{
+                        p: 1,
                         justify: 'flex-end',
-                        spacing: 1,
+                        spacing: 2,
                         alignItems: "center"
                     }}>
                         {data2.map(({name, id}) => (
@@ -141,9 +206,9 @@ function App() {
                 <Grid container spacing={1}>
 
                     {data.map((film, index) => (
-                        <Grid item xs={12} sm={4} key={index}>
+                        <Grid item xs={12} sm={3} key={index}>
                             <Card sx={{
-                                maxWidth: 345,
+                                maxWidth: '345',
                                 boxShadow: "0 5px 8px 0 rgba(0, 0, 0, 0.3)",
                                 backgroundColor: "#fafafa",
                             }}>
@@ -155,19 +220,63 @@ function App() {
 
                                 />
                                 <CardContent>
-                                    {film.youtube_trailer_key !== '' &&
-                                        <>
-                                            <Typography color="primary" variant="h5">
-                                                <a href={'https://www.youtube.com/watch?v=' + film.youtube_trailer_key}>{film.title}</a>
-                                            </Typography>
-                                            <Typography>{film.youtube_trailer_key}</Typography>
-                                        </>}
-                                    {film.youtube_trailer_key === '' &&
-                                        <Typography> {film.title} </Typography>
 
-                                    }
+                                    <Typography color="primary" variant="h5"
+                                                onClick={() => {
+
+                                                    idSetter(film.id)
+                                                    handleClickOpen()
+
+                                                }}>{film.title}</Typography>
+
+                                    <Dialog fullWidth={ true } maxWidth={"md"}
+                                        open={open}
+                                        onClose={handleClose}>
+                                        <DialogTitle>{filmData.title}</DialogTitle>
+
+                                            <DialogContent>
+
+
+                                                        <CardHeader
+                                                            avatar={
+                                                                <Avatar alt='Poster'
+                                                                        src={'https://image.tmdb.org/t/p/w500' + filmData.poster_path}
+                                                                        variant="square"
+                                                                        sx={{ width: 500, height: 700 }}
+
+                                                                >
+
+
+                                                                </Avatar>
+                                                            }
+                                                            title={filmData.overview}
+                                                        />
+
+
+
+
+
+                                                        {/*<DialogContentText>*/}
+                                                        {/*    {filmData.overview}*/}
+                                                        {/*    {filmData.homepage}*/}
+                                                        {/*</DialogContentText>*/}
+
+
+
+
+
+                                            </DialogContent>
+
+                                        <DialogActions>
+                                            <Button onClick={handleClose}>Close</Button>
+                                        </DialogActions>
+                                    </Dialog>
+
+                                    <Typography>{film.youtube_trailer_key}</Typography>
+
+
                                     <Typography color="textSecondary" variant="subtitle2">
-                                        Runtime: {film.runtime}
+                                        Rating: {film.vote_average}
                                     </Typography>
 
                                 </CardContent>
@@ -181,3 +290,22 @@ function App() {
 }
 
 export default App;
+
+
+// <CardContent>
+//     {film.backdrop_path !== '' &&
+//         <>
+//             <Typography color="primary" variant="h5">
+//                 <a href={'https://api.themoviedb.org/3/movie/' + film.id + '/watch/providers?api_key=43a1882111c5edfb0f545102ad6d9b52'}>{film.title}</a>
+//             </Typography>
+//             <Typography>{film.youtube_trailer_key}</Typography>
+//         </>}
+//     {film.youtube_trailer_key === '' &&
+//         <Typography> {film.title} </Typography>
+//
+//     }
+//     <Typography color="textSecondary" variant="subtitle2">
+//         Rating: {film.vote_average}
+//     </Typography>
+//
+// </CardContent>
