@@ -3,16 +3,15 @@ import React, {useEffect, useState} from "react";
 import {
     Avatar,
     Button,
-    Card,
-    CardActionArea,
-    CardContent, CardHeader,
+    Card, CardActionArea,
+    CardContent,
+    CardHeader,
     CardMedia,
     Chip,
     Container,
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     Grid,
     Typography
@@ -69,8 +68,11 @@ function App() {
     const [open, setOpen] = React.useState(false);
     const [filmData, setFilmData] = useState([])
     const [movieID, setMovieID] = useState([])
+    const [voteAverage, setVoteAverage] = useState(0)
 
     console.log(data)
+
+
 
 
     useEffect(() => {
@@ -92,8 +94,7 @@ function App() {
             };
             let res = result();
             console.log(res)
-            fetch(
-                'https://api.themoviedb.org/3/discover/movie?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=1&with_genres=' + res + '&with_watch_monetization_types=flatrate',
+            fetch('https://api.themoviedb.org/3/discover/movie?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US&sort_by=vote_count.desc&include_adult=false&include_video=false&page=1&with_genres=' + res + '&with_watch_monetization_types=flatrate'
             )
                 .then((res) => res.json())
                 .then((data) => setData(data.results))
@@ -151,6 +152,7 @@ function App() {
             .then((data) => setFilmData(data))
             .then(() => console.log(filmData))
             .then(() => console.log('movieIDuseffectrun'))
+            .then(() => setVoteAverage(filmData.vote_average))
     }, [movieID]);
 
 
@@ -175,7 +177,7 @@ function App() {
     // ))}
     return (
         <div>
-            <Container>
+            <Container >
 
                 <Typography
                     color="textPrimary"
@@ -203,22 +205,42 @@ function App() {
                     </Grid>
                 </Grid>
 
-                <Grid container spacing={1}>
+                <Grid container spacing={1} >
 
                     {data.map((film, index) => (
-                        <Grid item xs={12} sm={3} key={index}>
+                        <Grid item xs={12} sm={3} key={index} >
                             <Card sx={{
-                                maxWidth: '345',
+                                display: 'block',
+                                width: '345',
                                 boxShadow: "0 5px 8px 0 rgba(0, 0, 0, 0.3)",
                                 backgroundColor: "#fafafa",
+                                height: 1,
+                                transition: "transform 0.15s ease-in-out",
+                                "&:hover": {transform: "scale3d(1.02, 1.02, 1)"},
+                                transformStyle: 'preserve-3d',
                             }}>
-                                <CardMedia
+                                <CardActionArea onClick={() => {
+
+                                    idSetter(film.id)
+                                    handleClickOpen()
+
+                                }}>
+                                {film.poster_path ? <CardMedia
                                     sx={{
-                                        height: 300,
+                                        height: 375,
+                                        maxWidth: 345,
+
+                                    }}
+                                    image={'https://image.tmdb.org/t/p/w500' + film.poster_path}
+                                /> : <CardMedia
+                                    sx={{
+                                        height: 'auto',
                                     }}
                                     image={'https://image.tmdb.org/t/p/w500' + film.backdrop_path}
-
                                 />
+                                }
+                                </CardActionArea>
+
                                 <CardContent>
 
                                     <Typography color="primary" variant="h5"
@@ -229,54 +251,75 @@ function App() {
 
                                                 }}>{film.title}</Typography>
 
-                                    <Dialog fullWidth={ true } maxWidth={"md"}
-                                        open={open}
-                                        onClose={handleClose}>
-                                        <DialogTitle>{filmData.title}</DialogTitle>
 
-                                            <DialogContent>
-
-
-                                                        <CardHeader
-                                                            avatar={
-                                                                <Avatar alt='Poster'
-                                                                        src={'https://image.tmdb.org/t/p/w500' + filmData.poster_path}
-                                                                        variant="square"
-                                                                        sx={{ width: 500, height: 700 }}
-
-                                                                >
+                                    <Dialog maxWidth='lg'
+                                            open={open}
+                                            onClose={handleClose}   >
+                                        <DialogTitle variant='h5' align="center"
+                                        >{filmData.title}</DialogTitle>
+                                        {filmData.tagline ?
+                                            <Typography sx={{ m: -2, mx: 5}} noWrap='true' align="center" variant='caption'>{filmData.tagline}</Typography> : ''
+                                        }
+                                        <DialogContent style={{ overflow: "hidden", overflowY: 'hidden' }}>
 
 
-                                                                </Avatar>
-                                                            }
-                                                            title={filmData.overview}
-                                                        />
+                                            <CardHeader
+                                                avatar={
+                                                    <Avatar alt='Poster'
+                                                            src={'https://image.tmdb.org/t/p/w500' + filmData.poster_path}
+                                                            variant="square"
+                                                            sx={{width: 500, height: 700, }}
+
+                                                    >
 
 
+                                                    </Avatar>
+                                                }
+                                                title={
 
-
-
-                                                        {/*<DialogContentText>*/}
-                                                        {/*    {filmData.overview}*/}
-                                                        {/*    {filmData.homepage}*/}
-                                                        {/*</DialogContentText>*/}
+                                                    <div>
 
 
 
 
+                                                    <Typography color="textPrimary"
+                                                                 paragraph>{filmData.overview}</Typography>
+                                                        <Button variant="outlined" href={filmData.homepage}>Film
+                                                            Homepage</Button>
 
-                                            </DialogContent>
+                                                        {filmData.imdb_id ? <Button variant="outlined"
+                                                                                    href={'https://www.imdb.com/title/' + filmData.imdb_id}>IMDB
+                                                            page</Button> : <div></div>
+
+
+                                                        }
+
+
+                                                    </div>
+
+
+                                                }>
+
+
+                                            </CardHeader>
+
+
+                                            {/*<DialogContentText>*/}
+                                            {/*    {filmData.overview}*/}
+                                            {/*    {filmData.homepage}*/}
+                                            {/*</DialogContentText>*/}
+
+
+                                        </DialogContent>
 
                                         <DialogActions>
                                             <Button onClick={handleClose}>Close</Button>
                                         </DialogActions>
                                     </Dialog>
 
-                                    <Typography>{film.youtube_trailer_key}</Typography>
-
 
                                     <Typography color="textSecondary" variant="subtitle2">
-                                        Rating: {film.vote_average}
+                                        Rating: {film.vote_average}/10
                                     </Typography>
 
                                 </CardContent>
