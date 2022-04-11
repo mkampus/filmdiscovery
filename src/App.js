@@ -68,7 +68,6 @@ function App() {
     const [open, setOpen] = React.useState(false);
     const [filmData, setFilmData] = useState([])
     const [movieID, setMovieID] = useState([])
-    const [voteAverage, setVoteAverage] = useState(0)
 
     console.log(data)
 
@@ -152,7 +151,6 @@ function App() {
             .then((data) => setFilmData(data))
             .then(() => console.log(filmData))
             .then(() => console.log('movieIDuseffectrun'))
-            .then(() => setVoteAverage(filmData.vote_average))
     }, [movieID]);
 
 
