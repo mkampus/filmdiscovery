@@ -13,7 +13,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    Grid,
+    Grid, Link,
     Typography
 } from "@mui/material";
 
@@ -79,7 +79,7 @@ function App() {
         if (chosenGenres.length === 0) {
             console.log('empty chosenGenres')
             fetch(
-                'https://api.themoviedb.org/3/movie/popular?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US&page=1\n',
+                'https://api.themoviedb.org/3/movie/now_playing?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US&page=1',
             )
                 .then((res) => res.json())
                 .then((data) => setData(data.results))
@@ -225,31 +225,25 @@ function App() {
                                     handleClickOpen()
 
                                 }}>
-                                {film.poster_path ? <CardMedia
-                                    sx={{
-                                        height: 375,
-                                        maxWidth: 345,
-
-                                    }}
-                                    image={'https://image.tmdb.org/t/p/w500' + film.poster_path}
-                                /> : <CardMedia
-                                    sx={{
-                                        height: 'auto',
-                                    }}
-                                    image={'https://image.tmdb.org/t/p/w500' + film.backdrop_path}
-                                />
+                                {film.poster_path  ? <CardMedia sx={{height: 375, maxWidth: 345,}} image={'https://image.tmdb.org/t/p/w500' + film.poster_path}/>
+                                    : film.backdrop_path ? <CardMedia sx={{height: 'auto',}} image={'https://image.tmdb.org/t/p/w500' + film.backdrop_path}/>
+                                        : <CardMedia sx={{height: 'auto',}} image={'https://www.pinclipart.com/picdir/middle/4-49532_graphic-freeuse-download-film-projector-clipart-old-video.png'}/>
                                 }
                                 </CardActionArea>
 
                                 <CardContent>
 
-                                    <Typography color="primary" variant="h5"
-                                                onClick={() => {
+                                    <Typography  color="primary" variant="h5"
+                                                >
+                                        <Link href="#" underline="none" onClick={() => {
 
-                                                    idSetter(film.id)
-                                                    handleClickOpen()
+                                            idSetter(film.id)
+                                            handleClickOpen()
 
-                                                }}>{film.title}</Typography>
+                                        }}> {film.title}  </Link>
+
+
+                                        </Typography>
 
 
                                     <Dialog maxWidth='lg'
@@ -284,14 +278,16 @@ function App() {
 
                                                     <Typography color="textPrimary"
                                                                  paragraph>{filmData.overview}</Typography>
-                                                        <Button variant="outlined" href={filmData.homepage}>Film
-                                                            Homepage</Button>
+                                                        {filmData.vote_average ? <div>Vote Average:<Typography variant="overline" color='black'> {filmData.vote_average} / 10 </Typography> </div> : <div></div>}
+                                                        {filmData.runtime ? <div>Runtime:<Typography variant="overline" color='black'> {filmData.runtime} minutes </Typography> </div> : <div></div>}
 
+
+                                                        {filmData.homepage ? <Button variant="outlined" href={filmData.homepage}>Film
+                                                            Homepage</Button> : <div/>
+                                                        }
                                                         {filmData.imdb_id ? <Button variant="outlined"
                                                                                     href={'https://www.imdb.com/title/' + filmData.imdb_id}>IMDB
-                                                            page</Button> : <div></div>
-
-
+                                                            page</Button> : <div/>
                                                         }
 
 
