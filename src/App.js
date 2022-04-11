@@ -139,13 +139,13 @@ function App() {
         }
 
 
-        console.log(chosenGenres)
+        // console.log(chosenGenres)
     }
 
     useEffect(() => {
 
         let x = movieID[0]
-        console.log(x)
+        // console.log(x)
         fetch('https://api.themoviedb.org/3/movie/' + x + '?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US',)
             .then((res) => res.json())
             .then((data) => setFilmData(data))
