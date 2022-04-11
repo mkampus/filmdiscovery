@@ -1,10 +1,10 @@
 # The Great Film Discovery Engine
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It uses Material UI components and https://www.themoviedb.org/documentation/api for API endpoints to display movies
+and information.
 
-## TO DO
+Combine GENRES to find the perfect movie!
 
-In the project directory, you can run:
 
-## TO DO
 
