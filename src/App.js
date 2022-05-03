@@ -75,7 +75,7 @@ function App() {
 
 
     useEffect(() => {
-        if (chosenGenres.length === 0) {
+        if (chosenGenres.length <= 1) {
             console.log('empty chosenGenres')
             fetch(
                 'https://api.themoviedb.org/3/movie/now_playing?api_key=43a1882111c5edfb0f545102ad6d9b52&language=en-US&page=1',
@@ -83,6 +83,7 @@ function App() {
                 .then((res) => res.json())
                 .then((data) => setData(data.results))
                 .then(() => console.log('useffectrun'));
+
         } else {
             console.log('not empty Chosengenres')
             let result = function () {
