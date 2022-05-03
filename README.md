@@ -5,6 +5,6 @@ It uses Material UI components and https://www.themoviedb.org/documentation/api 
 and information.
 
 Combine GENRES to find the perfect movie!
-Try it out [here](https://darling-figolla-da8573.netlify.app/#)
+Try it out [here](https://62710f0a1a2fae2a420ee8e6--darling-figolla-da8573.netlify.app/)
 
 
